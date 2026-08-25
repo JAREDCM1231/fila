@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFO 🐢 | First In, First Out — Aprende con la tortuguita</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <svg class="svg-defs" aria-hidden="true" focusable="false">
+        <defs>
+            <linearGradient id="shellGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3cb37e"/>
+                <stop offset="100%" stop-color="#1f7a55"/>
+            </linearGradient>
+        </defs>
+
+        <symbol id="turtleSym" viewBox="0 0 240 170">
+            <g class="t-all">
+                <path class="t-flip t-flip-back" d="M186 116 Q216 104 230 120 Q212 138 184 128 Z"/>
+                <ellipse cx="122" cy="128" rx="66" ry="15" fill="#eafaf0" stroke="#c4e6d0" stroke-width="3"/>
+                <ellipse cx="120" cy="88" rx="66" ry="48" fill="url(#shellGrad)" stroke="#17603f" stroke-width="3.5"/>
+                <g fill="#63cf9b" opacity="0.95">
+                    <path d="M120 58 L146 88 L120 118 L94 88 Z"/>
+                    <ellipse cx="78" cy="70" rx="14" ry="11"/>
+                    <ellipse cx="162" cy="70" rx="14" ry="11"/>
+                    <ellipse cx="76" cy="108" rx="12" ry="9"/>
+                    <ellipse cx="164" cy="108" rx="12" ry="9"/>
+                </g>
+                <circle cx="45" cy="74" r="28" fill="#58bd85" stroke="#2f8f60" stroke-width="3.5"/>
+                <g class="t-face">
+                    <circle class="eye-white" cx="36" cy="66" r="7.5"/>
+                    <circle class="eye-white" cx="57" cy="64" r="7.5"/>
+                    <g class="t-pupils">
+                        <circle cx="37.5" cy="67.5" r="3.6"/>
+                        <circle cx="58.5" cy="65.5" r="3.6"/>
+                    </g>
+                    <circle class="t-cheek" cx="27" cy="79" r="5"/>
+                    <circle class="t-cheek" cx="64" cy="77" r="5"/>
+                    <path class="m-smile" d="M33 81 Q45 92 59 79"/>
+                    <path class="m-flat" d="M35 83 H57"/>
+                    <path class="m-open" d="M34 80 Q45 97 58 79 Z"/>
+                </g>
+                <path class="t-flip t-flip-front" d="M66 114 Q42 136 20 128 Q32 106 60 102 Z"/>
+            </g>
+        </symbol>
+    </svg>
+
+    <div class="ocean-bg" aria-hidden="true">
+        <div class="rays"></div>
+        <span class="bubble b1"></span>
+        <span class="bubble b2"></span>
+        <span class="bubble b3"></span>
+        <span class="bubble b4"></span>
+        <span class="bubble b5"></span>
+        <span class="bubble b6"></span>
+        <span class="bubble b7"></span>
+        <span class="bubble b8"></span>
+
+        <div class="seafloor"></div>
+
+        <div class="reef reef-left">
+            <svg viewBox="0 0 260 160" class="coral-svg">
+                <path d="M40 160 Q38 110 20 96 Q44 100 50 128 Q52 92 40 62 Q62 84 62 126 Q74 98 92 92 Q72 112 70 160 Z" fill="#ff8fa3" opacity="0.85"/>
+                <path d="M120 160 Q118 118 132 92 Q136 124 130 160 Z" fill="#ffb4a2" opacity="0.85"/>
+                <path d="M170 160 Q172 108 194 88 Q184 124 186 160 Z" fill="#c77dff" opacity="0.7"/>
+                <ellipse cx="220" cy="152" rx="34" ry="18" fill="#1d5d7a"/>
+                <ellipse cx="30" cy="156" rx="26" ry="14" fill="#164e66"/>
+            </svg>
+            <span class="weed w1"></span>
+            <span class="weed w2"></span>
+            <span class="weed w3"></span>
+        </div>
+
+        <div class="reef reef-right">
+            <svg viewBox="0 0 260 160" class="coral-svg coral-flip">
+                <path d="M200 160 Q204 104 226 86 Q214 126 214 160 Z" fill="#ffafcc" opacity="0.8"/>
+                <path d="M120 160 Q118 112 100 90 Q112 128 112 160 Z" fill="#bdb2ff" opacity="0.75"/>
+                <path d="M60 160 Q56 118 74 94 Q70 130 68 160 Z" fill="#a2d2ff" opacity="0.8"/>
+                <ellipse cx="30" cy="154" rx="30" ry="16" fill="#1d5d7a"/>
+                <ellipse cx="235" cy="158" rx="24" ry="13" fill="#164e66"/>
+            </svg>
+            <span class="weed w4"></span>
+            <span class="weed w5"></span>
+            <span class="weed w6"></span>
+        </div>
+    </div>
+
+    <header class="topbar">
+        <button id="btnMenu" class="btn-menu" aria-label="Abrir menú" aria-expanded="false">☰</button>
+        <span class="topbar-title">🐢 FIFO · First In, First Out</span>
+    </header>
+    <div id="menuOverlay" class="menu-overlay"></div>
+
+    <div class="page">
+
+        <aside id="sidebar" class="sidebar glass">
+            <div class="brand">
+                <div class="brand-logo">🐢</div>
+                <h1>FIFO</h1>
+                <p class="brand-en">First In, First Out</p>
+                <p class="brand-es">Primero en entrar,<br>primero en salir</p>
+            </div>
+
+            <nav id="mainNav" class="main-nav">
+                <a href="#que-es" class="nav-link active"><span>🏠</span> ¿Qué es FIFO?</a>
+                <a href="#simulador" class="nav-link"><span>🔄</span> Simulador</a>
+                <a href="#big-o" class="nav-link"><span>⚡</span> Big O</a>
+                <a href="#codigo-base" class="nav-link"><span>💻</span> Código Base</a>
+                <a href="#ejemplos" class="nav-link"><span>📋</span> Ejemplos</a>
+                <a href="#reto" class="nav-link"><span>🎯</span> Reto</a>
+                <a href="#comparacion" class="nav-link"><span>📊</span> Comparación</a>
+                <a href="#acerca" class="nav-link"><span>ℹ️</span> Acerca de</a>
+            </nav>
+        </aside>
+
+        <main class="col-center">
+
+            <section id="que-es" class="card section-card">
+                <h2 class="section-title">🐢 ¿Qué es una Queue (Cola)?</h2>
+                <p class="lead">
+                    Una <strong>Queue</strong> (cola en español) es una estructura de datos que funciona
+                    bajo el principio <strong>FIFO</strong>: <em>First In, First Out</em>, es decir,
+                    <strong>el primero en entrar es el primero en salir</strong>.
+                </p>
+
+                <div class="concept-flow">
+                    <span class="chip chip-enter">🚪 Primero en entrar</span>
+                    <span class="flow-arrow">➡️</span>
+                    <span class="chip chip-exit">🎉 Primero en salir</span>
+                </div>
+
+                <div class="mini-demo" aria-hidden="true">
+                    <span class="mini-label">SALIDA</span>
+                    <span class="mini-arrow">←</span>
+                    <span class="mini-item first">A</span>
+                    <span class="mini-item">B</span>
+                    <span class="mini-item">C</span>
+                    <span class="mini-item">D</span>
+                    <span class="mini-arrow">←</span>
+                    <span class="mini-label">ENTRADA</span>
+                </div>
+
+                <div class="theory-subsection">
+                    <h3 class="theory-subtitle">📌 Analogía del mundo real</h3>
+                    <p class="theory-text">
+                        Imaginate una fila en un supermercado. La primera persona que se formó
+                        en la caja es la primera en ser atendida y la primera en salir de la fila.
+                        Si llega una persona nueva, se pone al final y le toca esperar su turno.
+                        Nadie salta la fila: se respeta el orden de llegada. Exactamente así funciona
+                        una Queue en programación: los elementos se agregan al final y se sacan
+                        desde el frente, respetando el orden en que llegaron.
+                    </p>
+                </div>
+
+                <div class="theory-subsection">
+                    <h3 class="theory-subtitle">⚙️ Operaciones principales</h3>
+                    <div class="ops-grid">
+                        <div class="op-card">
+                            <span class="op-icon">➕</span>
+                            <h4>Enqueue</h4>
+                            <p>Agrega un elemento al <strong>final</strong> de la cola. Es como cuando una persona se pone al final de la fila.</p>
+                        </div>
+                        <div class="op-card">
+                            <span class="op-icon">➖</span>
+                            <h4>Dequeue</h4>
+                            <p>Elimina y devuelve el <strong>primer</strong> elemento de la cola. Es como cuando la persona que estaba al frente de la fila es atendida y se va.</p>
+                        </div>
+                        <div class="op-card">
+                            <span class="op-icon">👀</span>
+                            <h4>Peek</h4>
+                            <p>Permite <strong>consultar</strong> cuál es el primer elemento sin eliminarlo. Como mirar quién está al frente de la fila sin que esa persona se mueva.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="simulador" class="card section-card simulator">
+                <h2 class="section-title">🐢 SIMULADOR DE FILA (FIFO)</h2>
+
+                <div class="queue-stage">
+                    <div class="stage-side salida">
+                        <span class="stage-word">SALIDA</span>
+                        <span class="big-arrow">←</span>
+                    </div>
+
+                    <div id="queueTrack" class="queue-track"></div>
+
+                    <div class="stage-side entrada">
+                        <span class="big-arrow">←</span>
+                        <span class="stage-word">ENTRADA</span>
+                    </div>
+                </div>
+
+                <p id="simMsg" class="sim-msg">Pulsa ➕ Agregar elemento para experimentar.</p>
+
+                <div class="controls">
+                    <button id="btnAdd" class="btn btn-add">➕ Agregar elemento</button>
+                    <button id="btnRemove" class="btn btn-remove">➖ Eliminar primero</button>
+                    <button id="btnReset" class="btn btn-reset">🔄 Reiniciar</button>
+                    <button id="btnAuto" class="btn btn-auto">▶️ Modo automático</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-icon">👥</span>
+                        <span class="stat-label">Elementos en la fila</span>
+                        <strong id="statInQueue" class="stat-value">0</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">⭐</span>
+                        <span class="stat-label">Próximo en salir</span>
+                        <strong id="statNext" class="stat-value">—</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">🕐</span>
+                        <span class="stat-label">Elementos agregados</span>
+                        <strong id="statAdded" class="stat-value">0</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">🚪</span>
+                        <span class="stat-label">Elementos eliminados</span>
+                        <strong id="statRemoved" class="stat-value">0</strong>
+                    </div>
+                </div>
+
+                <div id="learningCard" class="learning-card" data-mood="">
+                    <svg class="mini-turtle" aria-hidden="true"><use href="#turtleSym"></use></svg>
+                    <div class="learning-text">
+                        <h3>🧠 MENSAJE DE APRENDIZAJE</h3>
+                        <p id="learningMsg">👋 ¡Hola! Soy la tortuguita guía. Los elementos entran por la derecha (ENTRADA) y salen por la izquierda (SALIDA). ¡Inténtalo!</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="big-o" class="card section-card">
+                <h2 class="section-title">⚡ Análisis de Rendimiento</h2>
+                <p class="lead">
+                    La eficiencia de una Queue depende de la implementación utilizada.
+                    En este proyecto se utiliza un <strong>Array de JavaScript</strong> con los métodos
+                    <code>push()</code> y <code>shift()</code>.
+                </p>
+
+                <div class="bigo-table-wrap">
+                    <table class="bigo-table">
+                        <thead>
+                            <tr>
+                                <th>Operación</th>
+                                <th>Complejidad</th>
+                                <th>Explicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Enqueue</strong></td>
+                                <td><span class="bigo-badge o1">O(1)</span></td>
+                                <td>Agregar al final con <code>push()</code> es una operación constante, ya que solo se añade al final del array sin mover otros elementos.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dequeue</strong></td>
+                                <td><span class="bigo-badge on">O(n)</span></td>
+                                <td>Eliminar con <code>shift()</code> requiere desplazar todos los elementos restantes una posición hacia la izquierda, lo que toma tiempo proporcional al número de elementos.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Peek</strong></td>
+                                <td><span class="bigo-badge o1">O(1)</span></td>
+                                <td>Acceder al primer elemento con <code>queue[0]</code> es instantáneo, ya que solo se lee una posición conocida del array.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Búsqueda</strong></td>
+                                <td><span class="bigo-badge on">O(n)</span></td>
+                                <td>En el peor caso, hay que recorrer todos los elementos hasta encontrar el deseado o confirmar que no está.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="theory-subsection">
+                    <h3 class="theory-subtitle">✅ ¿Cuándo utilizar una Queue?</h3>
+                    <p class="theory-text">
+                        Una Queue es ideal cuando necesitas procesar elementos en el <strong>orden exacto en que llegaron</strong>.
+                        Se utiliza mucho en sistemas de turnos, colas de impresión, procesamiento de solicitudes en servidores,
+                        algoritmos de recorrido en amplitud (BFS), y en cualquier situación donde el orden de llegada debe respetarse.
+                    </p>
+                </div>
+
+                <div class="theory-subsection">
+                    <h3 class="theory-subtitle">❌ ¿Cuándo NO utilizar una Queue?</h3>
+                    <p class="theory-text">
+                        Una Queue <strong>no es la mejor opción</strong> cuando necesitas acceder rápidamente a un elemento
+                        en cualquier posición, cuando necesitas buscar constantemente elementos arbitrarios, o cuando
+                        requieres acceso directo por índice. En esos casos, un Array o un Map serían más eficientes.
+                    </p>
+                </div>
+            </section>
+
+            <section id="codigo-base" class="card section-card">
+                <h2 class="section-title">💻 Código Base</h2>
+                <p class="lead">
+                    A continuación se muestra la implementación de la Queue utilizada en este simulador.
+                    Se utiliza un <strong>Array de JavaScript</strong> como estructura subyacente.
+                </p>
+                <pre class="code-block"><code>// Implementación de una Queue (Cola) usando Array de JavaScript
+
+const queue = [];
+
+// Enqueue: agrega un elemento al final de la cola
+function enqueue(element) {
+    queue.push(element);
+}
+
+// Dequeue: elimina y devuelve el primer elemento
+function dequeue() {
+    return queue.shift();
+}
+
+// Peek: consulta el primer elemento sin eliminarlo
+function peek() {
+    return queue[0];
+}
+
+// Verificar si la cola está vacía
+function isEmpty() {
+    return queue.length === 0;
+}
+
+// Tamaño de la cola
+function size() {
+    return queue.length;
+}</code></pre>
+            </section>
+
+        </main>
+
+        <aside class="col-right">
+
+            <section id="ejemplos" class="card section-card examples">
+                <h2 class="section-title">🌎 Aplicaciones en el Mundo Real</h2>
+
+                <div class="app-card">
+                    <span class="app-icon">🛒</span>
+                    <div class="app-info">
+                        <h4>Filas de supermercado y atención al cliente</h4>
+                        <p><strong>Dónde:</strong> Supermercados, bancos, restaurantes fast-food.</p>
+                        <p><strong>Cómo:</strong> Cada persona que llega se pone al final de la fila (enqueue). Cuando un cajero se desocupa, atiende a la persona que está al frente (dequeue). Se respeta el orden de llegada para ser justo con todos.</p>
+                    </div>
+                </div>
+
+                <div class="app-card">
+                    <span class="app-icon">🖨️</span>
+                    <div class="app-info">
+                        <h4>Cola de impresión</h4>
+                        <p><strong>Dónde:</strong> Oficinas, universidades, cualquier entorno con impresoras compartidas.</p>
+                        <p><strong>Cómo:</strong> Cuando varios usuarios envían documentos a la misma impresora, cada trabajo se agrega a una cola. La impresora procesa los documentos en el orden exacto en que fueron enviados, imprimiendo primero el que llegó primero.</p>
+                    </div>
+                </div>
+
+                <div class="app-card">
+                    <span class="app-icon">🌐</span>
+                    <div class="app-info">
+                        <h4>Procesamiento de solicitudes en servidores web</h4>
+                        <p><strong>Dónde:</strong> Servidores de páginas web, bases de datos, APIs.</p>
+                        <p><strong>Cómo:</strong> Cuando múltiples usuarios envían peticiones a un servidor al mismo tiempo, las solicitudes se encolan y se procesan en orden de llegada. Esto garantiza que cada usuario reciba respuesta de manera justa y ordenada.</p>
+                    </div>
+                </div>
+
+                <div id="examplesGrid" class="examples-grid"></div>
+                <button id="btnExamples" class="btn btn-secondary btn-wide">🔄 Ver otro ejemplo</button>
+            </section>
+
+            <section id="reto" class="card section-card reto">
+                <div class="reto-head">
+                    <svg class="mini-turtle reto-turtle" aria-hidden="true"><use href="#turtleSym"></use></svg>
+                    <h2 class="section-title small">🎯 ¡PON A PRUEBA LO APRENDIDO!</h2>
+                </div>
+
+                <p class="reto-question">¿Quién debe salir primero?</p>
+
+                <div id="retoLine" class="reto-line"></div>
+
+                <div id="retoOptions" class="reto-options"></div>
+
+                <p id="retoMsg" class="reto-msg">Selecciona tu respuesta 👇</p>
+
+                <p class="reto-score">
+                    ⭐ Racha: <strong id="retoStreak">0</strong>
+                    &nbsp;·&nbsp;
+                    🧩 Ejercicio: <strong id="retoCount">1</strong>
+                </p>
+            </section>
+
+        </aside>
+
+        <section id="comparacion" class="card compare-section span-all">
+            <h2 class="section-title center">⚖️ FIFO vs LIFO</h2>
+
+            <div class="compare-grid">
+                <article class="compare-card fifo">
+                    <h3>🚶 FIFO (Cola)</h3>
+                    <p class="compare-rule">Primero entra → Primero sale</p>
+                    <div class="compare-visual">
+                        <span class="cv-item out">A</span>
+                        <span class="cv-arrow-line">➡️</span>
+                        <span class="cv-item">B</span>
+                        <span class="cv-arrow-line">➡️</span>
+                        <span class="cv-item">C</span>
+                        <span class="cv-arrow-line">➡️</span>
+                        <span class="cv-item in">D</span>
+                    </div>
+                    <p class="compare-note"><strong>A</strong> sale primero · los nuevos entran por <strong>D</strong></p>
+                </article>
+
+                <article class="compare-card lifo">
+                    <h3>🥞 LIFO (Pila)</h3>
+                    <p class="compare-rule">Último entra → Primero sale</p>
+                    <div class="compare-visual stack">
+                        <span class="cv-item top">D</span>
+                        <span class="cv-item">C</span>
+                        <span class="cv-item">B</span>
+                        <span class="cv-item bottom">A</span>
+                    </div>
+                    <p class="compare-note"><span class="up-arrow">⬆️</span> <strong>D</strong> fue el último en entrar y sale primero</p>
+                </article>
+            </div>
+        </section>
+
+        <footer id="acerca" class="card about span-all">
+            <div class="about-inner">
+                <svg class="mini-turtle about-turtle" aria-hidden="true"><use href="#turtleSym"></use></svg>
+                <div>
+                    <h2>ℹ️ Acerca de</h2>
+                    <p>
+                        Página educativa interactiva sobre la estructura de datos <strong>cola (FIFO)</strong>.
+                        Objetivo: que puedas explicar que <em>FIFO significa First In, First Out:
+                        el primero en entrar es el primero en salir</em>, después de experimentar con el simulador.
+                    </p>
+                    <p class="about-foot">🐢 Hecho para aprender jugando · Proyecto de estructuras de datos · 2026</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <div id="turtleMascot" class="turtle-mascot" aria-hidden="true">
+        <div id="turtleBubble" class="turtle-bubble">¡Hola! 👋</div>
+        <svg class="big-turtle" viewBox="0 0 240 170"><use href="#turtleSym"></use></svg>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
